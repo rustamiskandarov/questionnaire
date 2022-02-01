@@ -17,6 +17,7 @@ class ConfigService {
 	}
 
 	public ensureValues(keys: string[]) {
+	
 		keys.forEach(k => this.getValue(k, true));
 		return this;
 	}
@@ -25,22 +26,24 @@ class ConfigService {
 		return this.getValue('PORT', true);
 	}
 
-	public isProduction() {
-		const mode = this.getValue('MODE', false);
-		return mode != 'DEV';
-	}
-
 	public getTypeOrmConfig(): TypeOrmModuleOptions {
+	
 		return {
 			type: 'postgres',
 
-			host: this.getValue('POSTGRES_HOST'),
-			port: parseInt(this.getValue('POSTGRES_PORT')),
-			username: this.getValue('POSTGRES_USER'),
-			password: this.getValue('POSTGRES_PASSWORD'),
-			database: this.getValue('POSTGRES_DATABASE'),
+			// host: this.getValue('POSTGRES_HOST'),
+			// port: parseInt(this.getValue('POSTGRES_PORT')),
+			// username: this.getValue('POSTGRES_USER'),
+			// password: this.getValue('POSTGRES_PASSWORD'),
+			// database: this.getValue('POSTGRES_DATABASE'),
 
-			entities: ['**/*.entity{.ts,.js}'],
+			host: process.env.POSTGRES_HOST,
+			port: Number(process.env.POSTGRES_PORT),
+			username: process.env.POSTGRES_USER,
+			password: process.env.POSTGRES_PASSWORD,
+			database: process.env.POSTGRES_DATABASE,
+
+			entities: [__dirname + '/**/*.entity{.ts,.js}'],
 			synchronize: false,
 			migrations: ['src/migrations/*.ts'],
 			cli: {
