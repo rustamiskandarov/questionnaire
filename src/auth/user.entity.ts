@@ -30,7 +30,7 @@ export class UserEntity {
 
 	//role: RoleEntity
 	@ApiProperty({ example: 'password', description: 'Пароль пользователя' })
-	@Column({ type: 'varchar', length: 300 })
+	@Column({ select:false, type: 'varchar', length: 300})
 	password: string;
 
 	//@ApiProperty({ example: 'Профиль', description: 'Профиль пользователя' })

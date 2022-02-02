@@ -23,7 +23,19 @@ export class AuthController {
 	async createUser(@Body() dto: UserSignUpDto) {
 		const newUser = new UserEntity();
 		Object.assign(newUser, dto);
-		return await this.authService.createUser(newUser);
+		const userFromBD =  await this.authService.createUser(newUser);
+		return this.authService.buildUserResponce(userFromBD);
+	}
+
+	@UsePipes(new ValidationPipe)
+	@ApiOperation({summary: 'Авторизация пользователя'})
+	@ApiResponse({status: 200, type: UserEntity})
+	@Post('login')
+	async loginUser(@Body() dto: UserSignUpDto) {
+		const newUser = new UserEntity();
+		Object.assign(newUser, dto);
+		const userFromBD = await this.authService.loginUserByEmail(newUser);
+		return this.authService.buildUserResponce(userFromBD);
 	}
 }
 
