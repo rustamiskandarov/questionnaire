@@ -3,16 +3,31 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { hash, compare } from 'bcrypt';
 import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { JwtService} from '@nestjs/jwt';
+
+import { sign } from 'jsonwebtoken';
 import { EMAIL_IS_BUSY_ERROR, USER_NO_EXISTS_ERROR, WRONG_LOGIN_AND_PASSWORD_ERROR } from 'src/exeptions-consts';
 import { IUserResponse } from './types/user.response.interface';
 
 @Injectable()
 export class AuthService {
 	
+	
+	
 	constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
-		private jwtService: JwtService
+		//private jwtService: JwtService
 	){}
+
+	async getAllUsers() {
+		const users = await this.userRepository.find();
+		return {
+			users
+		};
+	}
+
+	async findById(id: any) {
+		return await this.userRepository.findOne({id});
+	}
+
 	async createUser(newUser: UserEntity): Promise<UserEntity> {
 		newUser.password = await hash(newUser.password, 10);
 		const oldUser = await this.getUserByEmail(newUser.email);
@@ -49,14 +64,13 @@ export class AuthService {
 		
 	}
 
-	private async generateToken(user: UserEntity){
-		const token = await this.jwtService.signAsync({
+	private generateToken(user: UserEntity){
+		return sign({
 			id: user.id,
 			username: user.username,
 			email: user.email
-		});
+		}, process.env.JWT_SECRET);
 		
-		return token;
 	}
 
 

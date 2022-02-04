@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
 	ApiBearerAuth,
 	ApiOperation,
@@ -6,9 +6,11 @@ import {
 	ApiTags,
 } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AuthGuard } from 'src/guards/auth-guard';
 import { Repository } from 'typeorm';
 import { AuthService } from './auth.service';
 import { UserSignUpDto } from './dto/user.signup.dto';
+import { IUsersResponse } from './types/users.response.interface';
 import { UserEntity } from './user.entity';
 
 @ApiTags('Пользователи')
@@ -36,6 +38,14 @@ export class AuthController {
 		Object.assign(newUser, dto);
 		const userFromBD = await this.authService.loginUserByEmail(newUser);
 		return this.authService.buildUserResponce(userFromBD);
+	}
+
+	@ApiOperation({summary: 'Получить всех пользователей'})
+	@ApiResponse({ status: 200})
+	@UseGuards(AuthGuard)
+	@Get('users')
+	async getUsers(): Promise<IUsersResponse>{
+		return this.authService.getAllUsers();
 	}
 }
 
