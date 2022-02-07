@@ -37,7 +37,7 @@ export class AuthService {
 		return await this.userRepository.save(newUser);
 	}
 	async loginUserByEmail(user: UserEntity): Promise<UserEntity>{
-		const userFromBD = await this.userRepository.findOne({ email: user.email }, { select: ['id', 'username', 'email', 'password']});
+		const userFromBD = await this.userRepository.findOne({ email: user.email }, { select: ['id', 'username', 'email', 'password', 'roles']});
 		let comparePassword = false;
 		if (userFromBD) {
 			comparePassword = await compare(user.password, userFromBD.password);

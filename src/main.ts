@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, { cors: true });
 	
+	//for swagger
 	if (process.env.MODE=='prod'){
 		const config = new DocumentBuilder()
 			.setTitle('Questionnaire')

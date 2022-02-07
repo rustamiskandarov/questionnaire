@@ -1,6 +1,7 @@
 import { ProfileEntity } from 'src/profile/profile.entity';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { RoleEntity } from 'src/role/role.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -28,7 +29,10 @@ export class UserEntity {
 	@Column({ type: 'boolean', default: true })
 	isActive: boolean;
 
-	//role: RoleEntity
+	@ManyToMany(()=>RoleEntity, role=>role.users)
+	@JoinTable()
+	roles: RoleEntity[];
+
 	@ApiProperty({ example: 'password', description: 'Пароль пользователя' })
 	@Column({ select:false, type: 'varchar', length: 300})
 	password: string;
@@ -44,3 +48,4 @@ export class UserEntity {
 
 
 }
+
