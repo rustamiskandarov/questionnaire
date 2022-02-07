@@ -1,7 +1,7 @@
 import { UserEntity } from 'src/auth/user.entity';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({name: 'profile'})
+@Entity({name: 'profiles'})
 export class ProfileEntity {
 	@PrimaryGeneratedColumn('uuid')
 	id: number;
