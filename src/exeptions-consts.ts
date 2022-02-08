@@ -5,4 +5,6 @@ export const WRONG_PASSWORD_ERROR = 'Не верный пароль пользо
 export const WRONG_LOGIN_AND_PASSWORD_ERROR = 'Не верный логин или пароль пользователя';
 
 export const ROLE_NOT_FOUND_ERROR = 'Роль не найдена';
+export const STAUS_NOT_FOUND_ERROR = 'Статус не найден';
+export const ROLE_ALREADY_EXISTS_ERROR = 'Роль с таким именем уже существует';
 
