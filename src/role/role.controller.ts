@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StatusCodeEnum } from 'src/enums/status-code.enum';
 import { AuthGuard } from 'src/guards/auth-guard';
@@ -24,17 +24,17 @@ export class RoleController {
 		const roles = await this.roleService.getAllRoles();
 		return {roles: roles};
 	}
-
+	@UsePipes(new ValidationPipe)
 	@ApiOperation({ summary: 'Добавить роль' })
 	@ApiResponse({ status: 200 })
 	@UseGuards(AuthGuard)
 	@Post('add')
 	async setRole(@Body() dto: AddRoleDTO): Promise<IRoleResponse> {
+		const defaultStatus = StatusCodeEnum.Active;
 		const role = new RoleEntity;
-		//role.status = StatusCodeEnum.Active;
+		role.status = defaultStatus;
 		Object.assign(role, dto);
-		console.log(role);
-		return { role: await this.roleService.addRole(dto) };
+		return { role: await this.roleService.addRole(role) };
 	}
 	
 	@ApiOperation({ summary: 'Удалить роль' })
@@ -44,6 +44,7 @@ export class RoleController {
 	async deleteRole(@Param('name') name: string): Promise<DeleteResult> {
 		return await this.roleService.deleteRoleByName(name);
 	}
+
 	@ApiOperation({ summary: 'Изменить статус у роли' })
 	@ApiResponse({ status: 200 })
 	@UseGuards(AuthGuard)

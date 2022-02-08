@@ -18,7 +18,7 @@ export class UserEntity {
 	lastName: string;
 
 	@ApiProperty({ example: 'Ivanov1999666', description: 'Логин пользователя' })
-	@Column({ length: 40 })
+	@Column({ length: 40 , unique: true})
 	username: string;
 
 	@ApiProperty({ example: 'example-email@email.em', description: 'Эл.почта пользователя' })
