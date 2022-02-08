@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash, compare } from 'bcrypt';
-import { Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 import { sign } from 'jsonwebtoken';
@@ -18,7 +18,12 @@ export class AuthService {
 	){}
 
 	async getAllUsers() {
-		const users = await this.userRepository.find();
+		//const users = await this.userRepository.find();
+		const queryBuilder = getRepository(UserEntity)
+			.createQueryBuilder('users')
+			.leftJoinAndSelect('users.roles', 'roles');
+		queryBuilder.orderBy('users.createdAt', 'DESC');
+		const users = await queryBuilder.getMany();
 		return {
 			users
 		};
@@ -38,6 +43,7 @@ export class AuthService {
 	}
 	async loginUserByEmail(user: UserEntity): Promise<UserEntity>{
 		const userFromBD = await this.userRepository.findOne({ email: user.email }, { select: ['id', 'username', 'email', 'password', 'roles']});
+
 		let comparePassword = false;
 		if (userFromBD) {
 			comparePassword = await compare(user.password, userFromBD.password);
