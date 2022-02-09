@@ -18,7 +18,7 @@ export class UserEntity {
 	lastName: string;
 
 	@ApiProperty({ example: 'Ivanov1999666', description: 'Логин пользователя' })
-	@Column({ length: 40 })
+	@Column({ length: 40 , unique: true})
 	username: string;
 
 	@ApiProperty({ example: 'example-email@email.em', description: 'Эл.почта пользователя' })
@@ -29,7 +29,7 @@ export class UserEntity {
 	@Column({ type: 'boolean', default: true })
 	isActive: boolean;
 
-	@ManyToMany(()=>RoleEntity, role=>role.users)
+	@ManyToMany(()=>RoleEntity, role=>role.users, {eager: true})
 	@JoinTable()
 	roles: RoleEntity[];
 
@@ -41,7 +41,10 @@ export class UserEntity {
 	@OneToOne(()=>ProfileEntity)
 	profile: ProfileEntity;
 
-
+	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+	createdAt: Date
+	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+	updateAt: Date
 
 
 

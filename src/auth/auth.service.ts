@@ -1,15 +1,17 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash, compare } from 'bcrypt';
-import { Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 import { sign } from 'jsonwebtoken';
-import { EMAIL_IS_BUSY_ERROR, USER_NO_EXISTS_ERROR, WRONG_LOGIN_AND_PASSWORD_ERROR } from 'src/exeptions-consts';
+import { EMAIL_IS_BUSY_ERROR, USERNAME_IS_BUSY_ERROR, USER_NOT_FOUND_ERROR, USER_NO_EXISTS_ERROR, WRONG_LOGIN_AND_PASSWORD_ERROR } from 'src/exeptions-consts';
 import { IUserResponse } from './types/user.response.interface';
+import { RoleEntity } from 'src/role/role.entity';
 
 @Injectable()
 export class AuthService {
+	
 	
 	
 	
@@ -18,26 +20,46 @@ export class AuthService {
 	){}
 
 	async getAllUsers() {
-		const users = await this.userRepository.find();
+		//const users = await this.userRepository.find();
+		const queryBuilder = getRepository(UserEntity)
+			.createQueryBuilder('users')
+			.leftJoinAndSelect('users.roles', 'roles');
+		queryBuilder.orderBy('users.createdAt', 'DESC');
+		const users = await queryBuilder.getMany();
 		return {
 			users
 		};
 	}
 
+	async setRolesForUser(username: string, rolesEntities: RoleEntity[]): Promise<UserEntity>  {
+		const user = await this.userRepository.findOne({username});
+		if (!user) {
+			throw new NotFoundException(USER_NOT_FOUND_ERROR);
+		}
+		user.roles = rolesEntities;
+		return this.userRepository.save(user);
+	}
+	
 	async findById(id: any) {
 		return await this.userRepository.findOne({id});
 	}
 
 	async createUser(newUser: UserEntity): Promise<UserEntity> {
 		newUser.password = await hash(newUser.password, 10);
-		const oldUser = await this.getUserByEmail(newUser.email);
-		if(oldUser){
+		const oldUserByEmail = await this.getUserByEmail(newUser.email);
+		const oldUserByUsername = await this.userRepository.findOne({username: newUser.username});
+		if(oldUserByEmail){
 			throw new BadRequestException(EMAIL_IS_BUSY_ERROR);
 		}
+		if (oldUserByUsername){
+			throw new BadRequestException(USERNAME_IS_BUSY_ERROR);
+		}
+
 		return await this.userRepository.save(newUser);
 	}
 	async loginUserByEmail(user: UserEntity): Promise<UserEntity>{
 		const userFromBD = await this.userRepository.findOne({ email: user.email }, { select: ['id', 'username', 'email', 'password', 'roles']});
+
 		let comparePassword = false;
 		if (userFromBD) {
 			comparePassword = await compare(user.password, userFromBD.password);
