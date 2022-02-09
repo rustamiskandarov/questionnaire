@@ -61,13 +61,11 @@ export class AuthController {
 	async setRolesForUser(@Body('roles') roles: string[], @Param('username') username: string): Promise<{user: UserEntity}>{
 	
 		const rolesEntities: RoleEntity[] = [];
-		for(let i=0; i<roles.length; i++) {
-			const role = await this.roleService.findByName(roles[i]);
-			
-			if(role){
-				rolesEntities.push(role)
-			}
-		};
+
+		roles.forEach(async(el)=>{
+			const role = await this.roleService.findByName(el);
+			if (role) rolesEntities.push(role)
+		})
 		
 		return {
 			user: await this.authService.setRolesForUser(username, rolesEntities)
