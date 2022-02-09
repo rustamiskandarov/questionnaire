@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RoleEntity } from 'src/role/role.entity';
+import { RoleModule } from 'src/role/role.module';
 import { ProfileEntity } from '../profile/profile.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -7,7 +9,7 @@ import { UserEntity } from './user.entity';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity, ProfileEntity]),
+  imports: [RoleModule, TypeOrmModule.forFeature([UserEntity, ProfileEntity, RoleEntity]),
 //   JwtModule.register({
 // 	  secret: process.env.JWT_SECRET || 'SECRET',
 // 	//   signOptions: {

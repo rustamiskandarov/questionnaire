@@ -31,11 +31,12 @@ export class AuthService {
 		};
 	}
 
-	async addRolesForUser(username: string, rolesEntities: RoleEntity[]): Promise<UserEntity>  {
+	async setRolesForUser(username: string, rolesEntities: RoleEntity[]): Promise<UserEntity>  {
 		const user = await this.userRepository.findOne({username});
 		if (!user) {
 			throw new NotFoundException(USER_NOT_FOUND_ERROR);
 		}
+		user.roles = rolesEntities;
 		return this.userRepository.save(user);
 	}
 	
