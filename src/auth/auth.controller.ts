@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthGuard } from 'src/guards/auth-guard';
 import { RoleEntity } from 'src/role/role.entity';
+import { RoleService } from 'src/role/role.service';
 import { Repository } from 'typeorm';
 import { AuthService } from './auth.service';
 import { UserSignUpDto } from './dto/user.signup.dto';
@@ -18,7 +19,10 @@ import { UserEntity } from './user.entity';
 @ApiTags('Пользователи')
 @Controller('')
 export class AuthController {
-	constructor(private readonly authService: AuthService) { }
+	constructor(
+		private readonly authService: AuthService,
+		private readonly roleService: RoleService,
+		) { }
 
 	@UsePipes(new ValidationPipe)
 	@ApiOperation({summary: 'Регистрация пользователя'})
@@ -50,15 +54,23 @@ export class AuthController {
 		return this.authService.getAllUsers();
 	}
 
-	@ApiOperation({summary: 'Назначении роли пльзователю'})
+	@ApiOperation({summary: 'Назначение ролей пльзователю'})
 	@ApiResponse({ status: 200})
 	@UseGuards(AuthGuard)
 	@Put('users/:username/addRoles')
-	async addRoleForUser(@Body('roles') roles: string[], @Param('username') username: string): Promise<{user: UserEntity}>{
+	async setRolesForUser(@Body('roles') roles: string[], @Param('username') username: string): Promise<{user: UserEntity}>{
+	
 		const rolesEntities: RoleEntity[] = [];
-
+		for(let i=0; i<roles.length; i++) {
+			const role = await this.roleService.findByName(roles[i]);
+			
+			if(role){
+				rolesEntities.push(role)
+			}
+		};
+		
 		return {
-			user: await this.authService.addRolesForUser(username, rolesEntities)
+			user: await this.authService.setRolesForUser(username, rolesEntities)
 		};
 	}
 }

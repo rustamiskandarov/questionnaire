@@ -16,7 +16,7 @@ export class RoleEntity {
 	name: string;
 	@Column({ type: 'text' , nullable: true})
 	description: string;
-	@ManyToMany(() => UserEntity, user=>user.roles)
+	@ManyToMany(() => UserEntity)
 	@JoinTable()
 	users: UserEntity[];
 }
