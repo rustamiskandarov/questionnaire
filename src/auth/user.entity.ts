@@ -29,6 +29,10 @@ export class UserEntity {
 	@Column({ type: 'boolean', default: true })
 	isActive: boolean;
 
+	@ApiProperty({description: 'Причина блокировки пользователя'})
+	@Column({ length: 250, nullable: true })
+	blockedReason: string;
+
 	@ManyToMany(()=>RoleEntity, role=>role.users, {eager: true})
 	@JoinTable()
 	roles: RoleEntity[];

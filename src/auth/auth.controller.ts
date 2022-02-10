@@ -77,5 +77,29 @@ export class AuthController {
 
 
 	}
+
+	@ApiOperation({ summary: 'Блокировка пльзователя' })
+	@ApiResponse({ status: 200 })
+	@Roles("UManager")
+	@UseGuards(RoleGuard)
+	@Put('users/:username/block')
+	async blockkUser(@Body('reason') reason: string, @Param('username') username: string): Promise<{ user: UserEntity }> {
+
+		return {
+			user: await this.authService.blockUser(username, reason)
+		};
+	}
+
+	@ApiOperation({ summary: 'Разбокировка пльзователя' })
+	@ApiResponse({ status: 200 })
+	@Roles("UManager")
+	@UseGuards(RoleGuard)
+	@Put('users/:username/unlock')
+	async unlockUser(@Param('username') username: string): Promise<{ user: UserEntity }> {
+
+		return {
+			user: await this.authService.unlockkUser(username)
+		};
+	}
 }
 
