@@ -21,7 +21,9 @@ export class RoleService {
 			throw new NotFoundException(STAUS_NOT_FOUND_ERROR);
 		}
 		roleFromDB.status = newStatus;
-		return await this.roleRepository.save(roleFromDB);
+		if(roleFromDB){
+			return await this.roleRepository.save(roleFromDB);
+		}
 	}
 
 	async getAllRoles():Promise<RoleEntity[]>  {
@@ -40,10 +42,7 @@ export class RoleService {
 	}
 
 	async findByName(name: string): Promise<RoleEntity>{
-		const role: RoleEntity = await this.roleRepository.findOne({ name });
-		if (!role) {
-			throw new NotFoundException(ROLE_NOT_FOUND_ERROR);
-		}
-		return role;
+		return  await this.roleRepository.findOne({ name });
+		
 	}
 }
