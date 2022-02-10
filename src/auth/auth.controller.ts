@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, NotFoundException, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
 	ApiBearerAuth,
 	ApiOperation,
@@ -6,12 +6,15 @@ import {
 	ApiTags,
 } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthGuard } from 'src/guards/auth-guard';
+import { ROLE_NOT_FOUND_ERROR } from 'src/exeptions-consts';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { RoleGuard } from 'src/guards/role.guard';
 import { RoleEntity } from 'src/role/role.entity';
 import { RoleService } from 'src/role/role.service';
 import { Repository } from 'typeorm';
 import { AuthService } from './auth.service';
 import { UserSignUpDto } from './dto/user.signup.dto';
+import { Roles } from './roles-auth.decorator';
 import { IUserResponse } from './types/user.response.interface';
 import { IUsersResponse } from './types/users.response.interface';
 import { UserEntity } from './user.entity';
@@ -22,22 +25,22 @@ export class AuthController {
 	constructor(
 		private readonly authService: AuthService,
 		private readonly roleService: RoleService,
-		) { }
+	) { }
 
 	@UsePipes(new ValidationPipe)
-	@ApiOperation({summary: 'Регистрация пользователя'})
-	@ApiResponse({status: 200, type: UserEntity})
+	@ApiOperation({ summary: 'Регистрация пользователя' })
+	@ApiResponse({ status: 200, type: UserEntity })
 	@Post('auth/signup')
 	async createUser(@Body() dto: UserSignUpDto) {
 		const newUser = new UserEntity();
 		Object.assign(newUser, dto);
-		const userFromBD =  await this.authService.createUser(newUser);
+		const userFromBD = await this.authService.createUser(newUser);
 		return this.authService.buildUserResponce(userFromBD);
 	}
 
 	@UsePipes(new ValidationPipe)
-	@ApiOperation({summary: 'Авторизация пользователя'})
-	@ApiResponse({status: 200, type: UserEntity})
+	@ApiOperation({ summary: 'Авторизация пользователя' })
+	@ApiResponse({ status: 200, type: UserEntity })
 	@Post('auth/login')
 	async loginUser(@Body() dto: UserSignUpDto) {
 		const newUser = new UserEntity();
@@ -46,31 +49,56 @@ export class AuthController {
 		return this.authService.buildUserResponce(userFromBD);
 	}
 
-	@ApiOperation({summary: 'Получить всех пользователей'})
-	@ApiResponse({ status: 200})
+	@ApiOperation({ summary: 'Получить всех пользователей' })
+	@ApiResponse({ status: 200 })
 	@UseGuards(AuthGuard)
 	@Get('users')
-	async getUsers(): Promise<IUsersResponse>{
+	async getUsers(): Promise<IUsersResponse> {
 		return this.authService.getAllUsers();
 	}
 
-	@ApiOperation({summary: 'Назначение ролей пльзователю'})
-	@ApiResponse({ status: 200})
-	@UseGuards(AuthGuard)
+	@ApiOperation({ summary: 'Назначение ролей пльзователю' })
+	@ApiResponse({ status: 200 })
+	@Roles("UManager")
+	@UseGuards(RoleGuard)
 	@Put('users/:username/addRoles')
-	async setRolesForUser(@Body('roles') roles: string[], @Param('username') username: string): Promise<{user: UserEntity}>{
-	
+	async setRolesForUser(@Body('roles') roles: string[], @Param('username') username: string): Promise<{ user: UserEntity }> {
+
 		const rolesEntities: RoleEntity[] = [];
-		for(let i=0; i<roles.length; i++) {
-			const role = await this.roleService.findByName(roles[i]);
-			
-			if(role){
-				rolesEntities.push(role)
-			}
-		};
-		
+
+		roles.forEach( async (el) => {
+			const role = await this.roleService.findByName(el);
+			await rolesEntities.push(role)
+		})
+
 		return {
 			user: await this.authService.setRolesForUser(username, rolesEntities)
+		};
+
+
+	}
+
+	@ApiOperation({ summary: 'Блокировка пльзователя' })
+	@ApiResponse({ status: 200 })
+	@Roles("UManager")
+	@UseGuards(RoleGuard)
+	@Put('users/:username/block')
+	async blockkUser(@Body('reason') reason: string, @Param('username') username: string): Promise<{ user: UserEntity }> {
+
+		return {
+			user: await this.authService.blockUser(username, reason)
+		};
+	}
+
+	@ApiOperation({ summary: 'Разбокировка пльзователя' })
+	@ApiResponse({ status: 200 })
+	@Roles("UManager")
+	@UseGuards(RoleGuard)
+	@Put('users/:username/unlock')
+	async unlockUser(@Param('username') username: string): Promise<{ user: UserEntity }> {
+
+		return {
+			user: await this.authService.unlockkUser(username)
 		};
 	}
 }

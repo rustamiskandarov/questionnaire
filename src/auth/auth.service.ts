@@ -11,10 +11,6 @@ import { RoleEntity } from 'src/role/role.entity';
 
 @Injectable()
 export class AuthService {
-	
-	
-	
-	
 	constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
 		//private jwtService: JwtService
 	){}
@@ -32,10 +28,7 @@ export class AuthService {
 	}
 
 	async setRolesForUser(username: string, rolesEntities: RoleEntity[]): Promise<UserEntity>  {
-		const user = await this.userRepository.findOne({username});
-		if (!user) {
-			throw new NotFoundException(USER_NOT_FOUND_ERROR);
-		}
+		const user = await this.findByUsername(username);
 		user.roles = rolesEntities;
 		return this.userRepository.save(user);
 	}
@@ -43,6 +36,15 @@ export class AuthService {
 	async findById(id: any) {
 		return await this.userRepository.findOne({id});
 	}
+	async findByUsername(username: string): Promise<UserEntity> {
+		const user = await this.userRepository.findOne({username});
+		if(!user){
+			throw new NotFoundException(USER_NOT_FOUND_ERROR);
+		}
+		return user;
+	}
+
+
 
 	async createUser(newUser: UserEntity): Promise<UserEntity> {
 		newUser.password = await hash(newUser.password, 10);
@@ -93,6 +95,20 @@ export class AuthService {
 			email: user.email
 		}, process.env.JWT_SECRET);
 		
+	}
+
+	async blockUser(username: string, reason: string): Promise<UserEntity> {
+		const user = await this.findByUsername(username);
+		user.isActive = false;
+		user.blockedReason = reason;
+		return await this.userRepository.save(user);
+	}
+
+	async unlockkUser(username: string): Promise<UserEntity> {
+		const user = await this.findByUsername(username);
+		user.isActive = true;
+		user.blockedReason = '';
+		return await this.userRepository.save(user);
 	}
 
 

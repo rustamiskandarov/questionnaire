@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StatusCodeEnum } from 'src/enums/status-code.enum';
-import { AuthGuard } from 'src/guards/auth-guard';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { DeleteResult } from 'typeorm';
 import { AddRoleDTO } from './dto/add-role.dto';
 import { RoleEntity } from './role.entity';
