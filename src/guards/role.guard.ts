@@ -1,9 +1,9 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { userInfo } from 'os';
-import { ROLES_KEY } from 'src/auth/roles-auth.decorator';
-import { IUserRequestExpress } from 'src/auth/types/user.request.interface';
-import { ACCESS_DENIED_ERROR, USER_UNAUTHORIZED_ERROR } from 'src/exeptions-consts';
+import { ROLES_KEY } from '../auth/roles-auth.decorator';
+import { IUserRequestExpress } from '../auth/types/user.request.interface';
+import { ACCESS_DENIED_ERROR, USER_UNAUTHORIZED_ERROR } from '../exeptions-consts';
 import { resourceLimits } from 'worker_threads';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserEntity } from 'src/auth/user.entity';
-import { StatusCodeEnum } from 'src/enums/status-code.enum';
+import { UserEntity } from '../auth/user.entity';
+import { StatusCodeEnum } from '../enums/status-code.enum';
 
 
 @Entity({name: 'roles'})
