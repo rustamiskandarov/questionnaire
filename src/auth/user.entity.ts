@@ -1,7 +1,7 @@
-import { ProfileEntity } from 'src/profile/profile.entity';
+import { ProfileEntity } from '../profile/profile.entity';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { RoleEntity } from 'src/role/role.entity';
+import { RoleEntity } from '../role/role.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity {

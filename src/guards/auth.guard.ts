@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-import { IUserRequestExpress } from 'src/auth/types/user.request.interface';
-import { USER_UNAUTHORIZED_ERROR } from 'src/exeptions-consts';
+import { IUserRequestExpress } from '../auth/types/user.request.interface';
+import { USER_UNAUTHORIZED_ERROR } from '../exeptions-consts';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
