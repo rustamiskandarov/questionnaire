@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash, compare } from 'bcrypt';
 import { getRepository, Repository } from 'typeorm';
@@ -8,6 +8,7 @@ import { sign } from 'jsonwebtoken';
 import { EMAIL_IS_BUSY_ERROR, USERNAME_IS_BUSY_ERROR, USER_NOT_FOUND_ERROR, USER_NO_EXISTS_ERROR, WRONG_LOGIN_AND_PASSWORD_ERROR } from 'src/exeptions-consts';
 import { IUserResponse } from './types/user.response.interface';
 import { RoleEntity } from 'src/role/role.entity';
+import { UserBlockUnblockDto } from './dto/user-block-unlock.dto';
 
 @Injectable()
 export class AuthService {
@@ -47,20 +48,32 @@ export class AuthService {
 
 
 	async createUser(newUser: UserEntity): Promise<UserEntity> {
+		const errorResponse = {
+			errors: {}
+		}
 		newUser.password = await hash(newUser.password, 10);
 		const oldUserByEmail = await this.getUserByEmail(newUser.email);
 		const oldUserByUsername = await this.userRepository.findOne({username: newUser.username});
 		if(oldUserByEmail){
-			throw new BadRequestException(EMAIL_IS_BUSY_ERROR);
+			errorResponse.errors['email'] = EMAIL_IS_BUSY_ERROR;
 		}
 		if (oldUserByUsername){
-			throw new BadRequestException(USERNAME_IS_BUSY_ERROR);
+			errorResponse.errors['username'] = USERNAME_IS_BUSY_ERROR;
+		}
+		if (oldUserByUsername || oldUserByEmail) {
+			throw new HttpException(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 
 		return await this.userRepository.save(newUser);
 	}
 	async loginUserByEmail(user: UserEntity): Promise<UserEntity>{
-		const userFromBD = await this.userRepository.findOne({ email: user.email }, { select: ['id', 'username', 'email', 'password', 'roles']});
+		
+		const errorResponse = {
+			errors: {
+				'email or password': WRONG_LOGIN_AND_PASSWORD_ERROR
+			}
+		}
+		const userFromBD = await this.userRepository.findOne({ email: user.email }, { select: ['id', 'username', 'email', 'password']});
 
 		let comparePassword = false;
 		if (userFromBD) {
@@ -68,8 +81,9 @@ export class AuthService {
 		} 
 		
 		if (!userFromBD || !comparePassword){
-			throw new UnauthorizedException(WRONG_LOGIN_AND_PASSWORD_ERROR);
+			throw new UnauthorizedException(errorResponse);
 		}
+		
 		delete userFromBD.password;
 		return comparePassword ? userFromBD : null;
 	}
@@ -97,10 +111,10 @@ export class AuthService {
 		
 	}
 
-	async blockUser(username: string, reason: string): Promise<UserEntity> {
+	async blockUser(username: string, reasonDto: UserBlockUnblockDto): Promise<UserEntity> {
 		const user = await this.findByUsername(username);
 		user.isActive = false;
-		user.blockedReason = reason;
+		user.blockedReason = reasonDto.reason;
 		return await this.userRepository.save(user);
 	}
 

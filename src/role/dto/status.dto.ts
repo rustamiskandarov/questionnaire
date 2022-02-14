@@ -1,9 +1,7 @@
 import { IsString, IsNotEmpty } from "class-validator";
 
-export class AddRoleDTO {
+export class StatusDto {
 	@IsString()
 	@IsNotEmpty()
-	name: string
-	@IsString()
-	description?: string
+	status: string
 }
