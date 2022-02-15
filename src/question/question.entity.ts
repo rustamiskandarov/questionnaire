@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { QuestionStatusCodeEnum } from "src/enums/question-status-code.enum";
+import { QuestionStatusCodeEnum } from "../enums/question-status-code.enum";
 import internal from "stream";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
@@ -27,9 +27,9 @@ export class QuestionEntity {
 	//answers: AnswersEntity
 
 	//tags: TagsEntity
-	
+
 	@ApiProperty({ example: '999', description: 'Колличество просмотров' })
-	@Column({ type: 'number', default: 0 })
+	@Column({ type: 'integer', default: 0 })
 	views: number;
 
 
