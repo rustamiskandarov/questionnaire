@@ -1,7 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
+<<<<<<< HEAD
 import { QuestionStatusCodeEnum } from "../enums/question-status-code.enum";
+=======
+import { QuestionStatusCodeEnum } from "src/enums/question-status-code.enum";
+import { TagEntity } from "src/tag/tag.entity";
+>>>>>>> tag-module
 import internal from "stream";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'questions'})
 export class QuestionEntity {
@@ -25,9 +30,17 @@ export class QuestionEntity {
 	body: string;
 
 	//answers: AnswersEntity
+<<<<<<< HEAD
 
 	//tags: TagsEntity
 
+=======
+	
+	@ApiProperty({ example: 'abc, ddd, xyz', description: 'Теги/метки' })
+	@ManyToMany(() => TagEntity, tag => tag.questions, { eager: true })
+	tags: TagEntity[]
+	
+>>>>>>> tag-module
 	@ApiProperty({ example: '999', description: 'Колличество просмотров' })
 	@Column({ type: 'integer', default: 0 })
 	views: number;
