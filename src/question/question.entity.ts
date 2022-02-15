@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { QuestionStatusCodeEnum } from "../enums/question-status-code.enum";
 import { TagEntity } from "src/tag/tag.entity";
-import internal from "stream";
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'questions'})
@@ -35,9 +34,10 @@ export class QuestionEntity {
 	@Column({ type: 'integer', default: 0 })
 	views: number;
 
-
+	@ApiProperty({ example: '2020-02-21', description: 'Дата создания' })
 	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
 	createdAt: Date
+	@ApiProperty({ example: '2020-02-21', description: 'Дата изменения' })
 	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
 	updateAt: Date
 }
