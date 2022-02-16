@@ -1,8 +1,8 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
-import { AuthService } from 'src/auth/auth.service';
-import { IUserRequestExpress } from 'src/auth/types/user.request.interface';
+import { AuthService } from '../auth/auth.service';
+import { IUserRequestExpress } from '../auth/types/user.request.interface';
 
 
 @Injectable()

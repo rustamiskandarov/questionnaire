@@ -1,9 +1,8 @@
 import { BadRequestException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { NotFoundError } from 'rxjs';
-import { StatusCodeEnum } from 'src/enums/status-code.enum';
-import { ValidationException } from 'src/exceptions/validation.exception';
-import { ROLE_ALREADY_EXISTS_ERROR, ROLE_NOT_FOUND_ERROR, STAUS_NOT_FOUND_ERROR } from 'src/exeptions-consts';
+import { StatusCodeEnum } from '../enums/status-code.enum';
+import { ValidationException } from '../exceptions/validation.exception';
+import { ROLE_ALREADY_EXISTS_ERROR, ROLE_NOT_FOUND_ERROR, STAUS_NOT_FOUND_ERROR } from '../exeptions-consts';
 import { DeleteDateColumn, Repository } from 'typeorm';
 import { AddRoleDTO } from './dto/add-role.dto';
 import { RoleEntity } from './role.entity';

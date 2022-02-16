@@ -5,10 +5,11 @@ import { getRepository, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 import { sign } from 'jsonwebtoken';
-import { EMAIL_IS_BUSY_ERROR, USERNAME_IS_BUSY_ERROR, USER_NOT_FOUND_ERROR, USER_NO_EXISTS_ERROR, WRONG_LOGIN_AND_PASSWORD_ERROR } from 'src/exeptions-consts';
+import { EMAIL_IS_BUSY_ERROR, USERNAME_IS_BUSY_ERROR, USER_NOT_FOUND_ERROR, USER_NO_EXISTS_ERROR, WRONG_LOGIN_AND_PASSWORD_ERROR } from '../exeptions-consts';
 import { IUserResponse } from './types/user.response.interface';
-import { RoleEntity } from 'src/role/role.entity';
+import { RoleEntity } from '../role/role.entity';
 import { UserBlockUnblockDto } from './dto/user-block-unlock.dto';
+import { ValidationException } from '../exceptions/validation.exception';
 
 @Injectable()
 export class AuthService {
@@ -40,7 +41,7 @@ export class AuthService {
 	async findByUsername(username: string): Promise<UserEntity> {
 		const user = await this.userRepository.findOne({username});
 		if(!user){
-			throw new NotFoundException(USER_NOT_FOUND_ERROR);
+			throw new ValidationException({"user": USER_NOT_FOUND_ERROR}, HttpStatus.NOT_FOUND);
 		}
 		return user;
 	}
@@ -125,5 +126,8 @@ export class AuthService {
 		return await this.userRepository.save(user);
 	}
 
-
+	async deleteUserByName(username: string){
+		const user = await this.findByUsername(username);
+		return await this.userRepository.delete({username});
+	}
 }

@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Put, UseGuards, UsePipes } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { StatusCodeEnum } from 'src/enums/status-code.enum';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { MyValidationPipe } from 'src/pipes/my-validation.pipe';
+import { StatusCodeEnum } from '../enums/status-code.enum';
+import { AuthGuard } from '../guards/auth.guard';
+import { MyValidationPipe } from '../pipes/my-validation.pipe';
 import { DeleteResult } from 'typeorm';
 import { AddRoleDTO } from './dto/add-role.dto';
 import { StatusUpdateDto } from './dto/status-update.dto';

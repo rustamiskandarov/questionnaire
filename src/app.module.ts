@@ -10,6 +10,10 @@ import { RoleModule } from './role/role.module';
 import { UserEntity } from './auth/user.entity';
 import { ProfileEntity } from './profile/profile.entity';
 import { RoleEntity } from './role/role.entity';
+import { QuestionModule } from './question/question.module';
+import { TagModule } from './tag/tag.module';
+import { AnswerModule } from './answer/answer.module';
+import { CommentModule } from './comment/comment.module';
 import ormconfig from './ormconfig';
 @Module({
 	imports: [
@@ -46,7 +50,11 @@ import ormconfig from './ormconfig';
 		),
 		AuthModule,
 		ProfileModule,
-		RoleModule
+		RoleModule,
+		QuestionModule,
+		TagModule,
+		AnswerModule,
+		CommentModule
 	],
 	controllers: [AppController],
 })
