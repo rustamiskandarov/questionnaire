@@ -5,7 +5,7 @@ import { TagDto } from './dto/tag.dto';
 import { TagEntity } from './tag.entity';
 import slugify from 'slugify';
 import { createSlug } from '../utils/create-slug';
-import { ValidationException } from '../exceptions/validation.exception';
+import { CustomException } from '../exceptions/custom.exception';
 import { NAME_IS_BUSY_ERROR } from '../exeptions-consts';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class TagService {
 
 	async saveTag(tagDto: TagDto): Promise<TagEntity>{
 		if(await this.findOneByName(tagDto.name)){
-			throw new ValidationException({ name: NAME_IS_BUSY_ERROR});
+			throw new CustomException({ name: NAME_IS_BUSY_ERROR});
 		}
 		const newTag = new TagEntity();
 		Object.assign(newTag, tagDto);

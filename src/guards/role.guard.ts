@@ -5,6 +5,7 @@ import { ROLES_KEY } from '../auth/roles-auth.decorator';
 import { IUserRequestExpress } from '../auth/types/user.request.interface';
 import { ACCESS_DENIED_ERROR, USER_UNAUTHORIZED_ERROR } from '../exeptions-consts';
 import { resourceLimits } from 'worker_threads';
+import { CustomException } from '../exceptions/custom.exception';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -21,7 +22,7 @@ export class RoleGuard implements CanActivate {
 			return request.user.roles.some(role=>requaredRoles.includes(role.name));
 		
 		} catch (error) {
-			throw new HttpException(ACCESS_DENIED_ERROR, HttpStatus.FORBIDDEN);
+			throw new CustomException(ACCESS_DENIED_ERROR, HttpStatus.FORBIDDEN);
 		}
 
 

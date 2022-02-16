@@ -35,6 +35,7 @@ export class TagController {
 	}
 
 
+	@ApiOperation({ summary: 'Получить список тегов в виде массива строк' })
 	@Get()
 	async getAllToArrayString(): Promise<{ tags: string[] }> {
 		const tags = await this.tagService.findAll();
