@@ -7,6 +7,7 @@ export const FIELD_MUST_BY_NOT_EMPTY = 'Поле не должно быть пу
 //excaptions
 export const EMAIL_IS_BUSY_ERROR = 'Данный еmail уже используеться';
 export const USERNAME_IS_BUSY_ERROR = 'Данный username уже используеться';
+export const NAME_IS_BUSY_ERROR = 'Название уже используеться';
 export const USER_NO_EXISTS_ERROR = 'Пользователь с данным email не существует';
 export const USER_NOT_FOUND_ERROR = 'Пользователь не найден';
 export const USER_UNAUTHORIZED_ERROR = 'Пользователь не авторизован';
