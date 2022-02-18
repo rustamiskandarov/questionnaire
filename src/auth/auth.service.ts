@@ -9,7 +9,7 @@ import { EMAIL_IS_BUSY_ERROR, USERNAME_IS_BUSY_ERROR, USER_NOT_FOUND_ERROR, USER
 import { IUserResponse } from './types/user.response.interface';
 import { RoleEntity } from '../role/role.entity';
 import { UserBlockUnblockDto } from './dto/user-block-unlock.dto';
-import { ValidationException } from '../exceptions/validation.exception';
+import { CustomException } from '../exceptions/custom.exception';
 
 @Injectable()
 export class AuthService {
@@ -41,7 +41,7 @@ export class AuthService {
 	async findByUsername(username: string): Promise<UserEntity> {
 		const user = await this.userRepository.findOne({username});
 		if(!user){
-			throw new ValidationException({"user": USER_NOT_FOUND_ERROR}, HttpStatus.NOT_FOUND);
+			throw new CustomException({"user": USER_NOT_FOUND_ERROR}, HttpStatus.NOT_FOUND);
 		}
 		return user;
 	}

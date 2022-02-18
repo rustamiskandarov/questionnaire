@@ -1,13 +1,14 @@
 import { ProfileEntity } from '../profile/profile.entity';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable} from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { RoleEntity } from '../role/role.entity';
+import { QuestionEntity } from '../question/question.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity {
 	@ApiProperty({ example: '2ee9b1f4-0f19-4d10-aa0a-d265e990c6cb', description: 'UUID пользователя'})
 	@PrimaryGeneratedColumn('uuid')
-	id: number;
+	id: string;
 
 	@ApiProperty({ example: 'Иван', description: 'Имя пользователя' })
 	@Column({ length: 40, nullable: true })
@@ -36,6 +37,10 @@ export class UserEntity {
 	@ManyToMany(()=>RoleEntity, role=>role.users, {eager: true})
 	@JoinTable()
 	roles: RoleEntity[];
+
+
+	@OneToMany(()=> QuestionEntity, question => question.author)
+	questions: QuestionEntity[];
 
 	@ApiProperty({ example: 'password', description: 'Пароль пользователя' })
 	@Column({ select:false, type: 'varchar', length: 300})

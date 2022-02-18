@@ -1,7 +1,7 @@
 import { ArgumentMetadata, HttpException, HttpStatus, PipeTransform, ValidationError } from "@nestjs/common";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
-import { ValidationException } from "../exceptions/validation.exception";
+import { CustomException } from "../exceptions/custom.exception";
 
 
 export class MyValidationPipe implements PipeTransform {
@@ -16,7 +16,7 @@ export class MyValidationPipe implements PipeTransform {
 			return value;
 		}
 
-		throw new ValidationException(this.forrmatError(errors))
+		throw new CustomException(this.forrmatError(errors))
 	}
 
 	private forrmatError(errors: ValidationError[]) {

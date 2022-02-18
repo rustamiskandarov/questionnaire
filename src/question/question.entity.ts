@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { QuestionStatusCodeEnum } from "../enums/question-status-code.enum";
-import { TagEntity } from "src/tag/tag.entity";
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { TagEntity } from "../tag/tag.entity";
+import { BeforeUpdate, Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { UserEntity } from "../auth/user.entity";
 
 @Entity({name: 'questions'})
 export class QuestionEntity {
@@ -24,8 +25,14 @@ export class QuestionEntity {
 	@Column({ type: 'text' })
 	body: string;
 
+	@ApiProperty({ example: '999', description: 'В избранных' })
+	@Column({ default: 0 })
+	favoritesCount: number
 	//answers: AnswersEntity
 	
+	@ManyToOne(() => UserEntity, user => user.questions, { eager: true })
+	author: UserEntity
+
 	@ApiProperty({ example: 'abc, ddd, xyz', description: 'Теги/метки' })
 	@ManyToMany(() => TagEntity, tag => tag.questions, { eager: true })
 	tags: TagEntity[]
@@ -40,4 +47,9 @@ export class QuestionEntity {
 	@ApiProperty({ example: '2020-02-21', description: 'Дата изменения' })
 	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
 	updateAt: Date
+
+	@BeforeUpdate()
+	updateDate() {
+		this.updateAt = new Date();
+	}
 }
