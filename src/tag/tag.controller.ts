@@ -17,17 +17,17 @@ export class TagController {
 	@ApiOperation({ summary: 'добавление нового тега' })
 	@ApiResponse({ status: 201, type: TagEntity })
 	@Post('')
-	async createUser(@Body() dto: TagDto):Promise<{tag: TagEntity}> {
-		
+	async createUser(@Body() dto: TagDto): Promise<{ tag: TagEntity }> {
+
 		const tagFromBD = await this.tagService.saveTag(dto);
 		return {
 			tag: tagFromBD
-		}
+		};
 	}
 
 	@ApiOperation({ summary: 'Удаление тега' })
 	@ApiResponse({ status: 200 })
-	@Roles("Admin", "UManager")
+	@Roles('Admin', 'UManager')
 	@UseGuards(RoleGuard)
 	@Delete('/:slug')
 	async deleteUser(@Param('slug') slug: string) {
@@ -41,6 +41,6 @@ export class TagController {
 		const tags = await this.tagService.findAll();
 		return {
 			tags: tags.map((tag) => tag.name),
-		}
+		};
 	}
 }

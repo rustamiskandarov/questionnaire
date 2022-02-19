@@ -7,17 +7,17 @@ import { EMAIL_IS_BUSY_ERROR, USERNAME_IS_BUSY_ERROR, USER_NOT_FOUND_ERROR, WRON
 
 
 const createUserDto: UserSignUpDto = {
-	username: 'user111',
+	username: 'user1119999999999',
 	email: 'user111@fsdjh8f8jf1.df',
 	password: '123eeeeee'
-}
+};
 
 
 describe('AuthController (e2e)', () => {
 	let app: INestApplication;
 	let token: string;
 	let username: string;
-	const adminToken = process.env.ADMIN_TOKEN
+	const adminToken = process.env.ADMIN_TOKEN;
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -49,7 +49,7 @@ describe('AuthController (e2e)', () => {
 				}
 			});
 	});
-	
+
 	it('auth/login/ (POST) - success', () => {
 		return request(app.getHttpServer())
 			.post('/auth/login/')
@@ -65,20 +65,20 @@ describe('AuthController (e2e)', () => {
 	it('auth/login/ (POST) - fail (wrong password or login)', () => {
 		return request(app.getHttpServer())
 			.post('/auth/login/')
-			.send({ ...createUserDto, password: '1!@#%$^%*&'})
+			.send({ ...createUserDto, password: '1!@#%$^%*&' })
 			.expect(401, {
 				errors: {
-					'email or password':WRONG_LOGIN_AND_PASSWORD_ERROR
+					'email or password': WRONG_LOGIN_AND_PASSWORD_ERROR
 				}
 			});
 	});
 	it('users/username/addRoles (PUT) - fail (role not found)', () => {
 		return request(app.getHttpServer())
-			.put('/users/'+username+'/addRoles')
+			.put('/users/' + username + '/addRoles')
 			.set('Authorization', 'Bearer ' + adminToken)
 			.send({
 				roles: [
-					"#$$#$@#$%$$#"
+					'#$$#$@#$%$$#'
 				]
 			})
 			.expect(200)
@@ -89,26 +89,26 @@ describe('AuthController (e2e)', () => {
 	});
 	it('users/username/addRoles (PUT) - success', () => {
 		return request(app.getHttpServer())
-			.put('/users/'+username+'/addRoles')
+			.put('/users/' + username + '/addRoles')
 			.set('Authorization', 'Bearer ' + adminToken)
 			.send({
 				roles: [
-					"UManager"
+					'UManager'
 				]
 			})
 			.expect(200)
 			.then(({ body }: request.Response) => {
-				expect(body.user.roles[0].name).toContain("UManager");
+				expect(body.user.roles[0].name).toContain('UManager');
 			})
 			;
 	});
 	it('users/username/addRoles (PUT) - fail (user not found)', () => {
 		return request(app.getHttpServer())
-			.put('/users/'+username+111111111+'/addRoles')
+			.put('/users/' + username + 111111111 + '/addRoles')
 			.set('Authorization', 'Bearer ' + adminToken)
 			.send({
 				roles: [
-					"UManager"
+					'UManager'
 				]
 			})
 			.expect(404, {
@@ -123,7 +123,7 @@ describe('AuthController (e2e)', () => {
 			.put('/users/' + username + 11111111111111111 + '/block')
 			.set('Authorization', 'Bearer ' + adminToken)
 			.send({
-				"reason": "ban"
+				'reason': 'ban'
 			})
 			.expect(404, {
 				errors: {
@@ -135,23 +135,23 @@ describe('AuthController (e2e)', () => {
 
 	it('users/username/block (PUT) - success', () => {
 		return request(app.getHttpServer())
-			.put('/users/' + username +'/block')
+			.put('/users/' + username + '/block')
 			.set('Authorization', 'Bearer ' + adminToken)
 			.send({
-				"reason": "ban"
+				'reason': 'ban'
 			})
 			.expect(200)
 			.then(({ body }: request.Response) => {
 				expect(body.user.isActive).toBe(false);
-				expect(body.user.blockedReason).toBe("ban");
+				expect(body.user.blockedReason).toBe('ban');
 			})
 			;
 	});
-	
+
 
 	it('users/username/unlock (PUT) - fail (user not found)', () => {
 		return request(app.getHttpServer())
-			.put('/users/' + username+1111111 +'/unlock')
+			.put('/users/' + username + 1111111 + '/unlock')
 			.set('Authorization', 'Bearer ' + adminToken)
 			.expect(404, {
 				errors: {
@@ -162,7 +162,7 @@ describe('AuthController (e2e)', () => {
 
 	it('users/username/unlock (PUT) - success', () => {
 		return request(app.getHttpServer())
-			.put('/users/' + username +'/unlock')
+			.put('/users/' + username + '/unlock')
 			.set('Authorization', 'Bearer ' + adminToken)
 			.expect(200)
 			.then(({ body }: request.Response) => {
@@ -173,21 +173,21 @@ describe('AuthController (e2e)', () => {
 	});
 
 
-	it('users (GET) - success', ()=>{
+	it('users (GET) - success', () => {
 		return request(app.getHttpServer())
-		.get('/users')
-		.set('Authorization', 'Bearer ' + adminToken)
-		.expect(200)
-		.then(({body}: request.Response)=>{
-			body.users.forEach(el => {
-				if(el.username == username){
-					expect(el.username).toContain(username);
-				} else {
-					expect(body.users[0].username).toContain(username);
-				}
-			});
-			
-		})
+			.get('/users')
+			.set('Authorization', 'Bearer ' + adminToken)
+			.expect(200)
+			.then(({ body }: request.Response) => {
+				body.users.forEach(el => {
+					if (el.username == username) {
+						expect(el.username).toContain(username);
+					} else {
+						expect(body.users[0].username).toContain(username);
+					}
+				});
+
+			})
 	});
 
 

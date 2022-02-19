@@ -3,7 +3,6 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { UserSignUpDto } from '../src/auth/dto/user.signup.dto';
-import { ACCESS_DENIED_ERROR, EMAIL_IS_BUSY_ERROR, NAME_IS_BUSY_ERROR, USERNAME_IS_BUSY_ERROR, USER_NOT_FOUND_ERROR, WRONG_LOGIN_AND_PASSWORD_ERROR } from '../src/exeptions-consts';
 import { CreateQuestionDto } from '../src/question/dto/create-question.dto';
 
 const createUserDto: UserSignUpDto = {
@@ -16,13 +15,13 @@ const createQuestionDto: CreateQuestionDto = {
 	title: 'тестовый вопрос',
 	body: 'текст тестового вопроса',
 	tagList: ['Tag1', 'Tag2']
-}
+};
 
 
 describe('QuestionController (e2e)', () => {
 	let app: INestApplication;
 	let slug: string;
-	const adminToken = process.env.ADMIN_TOKEN
+	const adminToken = process.env.ADMIN_TOKEN;
 	let userToken: string;
 
 	beforeAll(async () => {
@@ -41,12 +40,12 @@ describe('QuestionController (e2e)', () => {
 	it('question/ (POST) - success', () => {
 		return request(app.getHttpServer())
 			.post('/question/')
-			.set('Authorization',userToken)
+			.set('Authorization', userToken)
 			.send(createQuestionDto)
 			.expect(201)
 			.then(({ body }: request.Response) => {
 				expect(body.question.title).toBe(createQuestionDto.title);
-				slug = body.question.slug
+				slug = body.question.slug;
 			});
 	});
 

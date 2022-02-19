@@ -2,8 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { UserSignUpDto } from '../src/auth/dto/user.signup.dto';
-import { ACCESS_DENIED_ERROR, EMAIL_IS_BUSY_ERROR, NAME_IS_BUSY_ERROR, USERNAME_IS_BUSY_ERROR, USER_NOT_FOUND_ERROR, WRONG_LOGIN_AND_PASSWORD_ERROR } from '../src/exeptions-consts';
+import { ACCESS_DENIED_ERROR, NAME_IS_BUSY_ERROR } from '../src/exeptions-consts';
 import { TagDto } from '../src/tag/dto/tag.dto';
 
 
@@ -16,7 +15,7 @@ const createTagDto: TagDto = {
 describe('TagController (e2e)', () => {
 	let app: INestApplication;
 	let slug: string;
-	const adminToken = process.env.ADMIN_TOKEN
+	const adminToken = process.env.ADMIN_TOKEN;
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -34,7 +33,7 @@ describe('TagController (e2e)', () => {
 			.expect(201)
 			.then(({ body }: request.Response) => {
 				expect(body.tag.name).toBe(createTagDto.name);
-				slug = body.tag.slug
+				slug = body.tag.slug;
 			});
 	});
 
@@ -74,7 +73,7 @@ describe('TagController (e2e)', () => {
 					}
 				});
 
-			})
+			});
 	});
 
 

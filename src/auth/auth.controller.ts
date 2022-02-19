@@ -1,6 +1,5 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, NotFoundException, Param, Post, Put, UseGuards, UsePipes} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UsePipes } from '@nestjs/common';
 import {
-	ApiBearerAuth,
 	ApiOperation,
 	ApiResponse,
 	ApiTags,
@@ -49,10 +48,10 @@ export class AuthController {
 		return this.authService.buildUserResponce(userFromBD);
 	}
 
-	@ApiOperation({ summary: 'Блокировка пльзователя' })
+	@ApiOperation({ summary: 'Блокировка пользователя' })
 	@UsePipes(MyValidationPipe)
 	@ApiResponse({ status: 200 })
-	@Roles("UManager", "Admin")
+	@Roles('UManager', 'Admin')
 	@UseGuards(RoleGuard)
 	@Put('users/:username/block')
 	async blockUser(@Param('username') username: string, @Body() dto: UserBlockUnblockDto): Promise<{ user: UserEntity }> {
@@ -70,28 +69,30 @@ export class AuthController {
 	}
 
 	@UsePipes(new MyValidationPipe())
-	@ApiOperation({ summary: 'Назначение ролей пльзователю' })
+	@ApiOperation({ summary: 'Назначение ролей пользователю' })
 	@ApiResponse({ status: 200 })
-	@Roles("UManager","Admin")
+	@Roles('UManager', 'Admin')
 	@UseGuards(RoleGuard)
 	@Put('users/:username/addRoles')
-	async setRolesForUser(@Body() dto: UserAddRoleDto, @Param('username') username: string): Promise<{ user: UserEntity }> {
+	async setRolesForUser(
+		@Body() dto: UserAddRoleDto, @Param('username') username: string
+	): Promise<{ user: UserEntity }> {
 		const rolesEntities: RoleEntity[] = [];
-		dto.roles.forEach( async (el) => {
+		dto.roles.forEach(async (el) => {
 			const role = await this.roleService.findByName(el);
-			if(role){
-				await rolesEntities.push(role)
+			if (role) {
+				rolesEntities.push(role);
 			}
-		})
+		});
 
 		return {
 			user: await this.authService.setRolesForUser(username, rolesEntities)
 		};
 	}
 
-	@ApiOperation({ summary: 'Разбокировка пльзователя' })
+	@ApiOperation({ summary: 'Разбокировка пользователя' })
 	@ApiResponse({ status: 200 })
-	@Roles("UManager", "Admin")
+	@Roles('UManager', 'Admin')
 	@UseGuards(RoleGuard)
 	@Put('users/:username/unlock')
 	async unlockUser(@Param('username') username: string): Promise<{ user: UserEntity }> {
@@ -102,7 +103,7 @@ export class AuthController {
 
 	@ApiOperation({ summary: 'Удаление пользователя' })
 	@ApiResponse({ status: 200 })
-	@Roles("Admin", "UManager")
+	@Roles('Admin', 'UManager')
 	@UseGuards(RoleGuard)
 	@Delete('users/:username')
 	async deleteUser(@Param('username') username: string) {

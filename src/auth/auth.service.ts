@@ -5,7 +5,7 @@ import { getRepository, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 import { sign } from 'jsonwebtoken';
-import { EMAIL_IS_BUSY_ERROR, USERNAME_IS_BUSY_ERROR, USER_NOT_FOUND_ERROR, USER_NO_EXISTS_ERROR, WRONG_LOGIN_AND_PASSWORD_ERROR } from '../exeptions-consts';
+import { EMAIL_IS_BUSY_ERROR, USERNAME_IS_BUSY_ERROR, USER_NOT_FOUND_ERROR, WRONG_LOGIN_AND_PASSWORD_ERROR } from '../exeptions-consts';
 import { IUserResponse } from './types/user.response.interface';
 import { RoleEntity } from '../role/role.entity';
 import { UserBlockUnblockDto } from './dto/user-block-unlock.dto';
@@ -15,7 +15,7 @@ import { CustomException } from '../exceptions/custom.exception';
 export class AuthService {
 	constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
 		//private jwtService: JwtService
-	){}
+	) { }
 
 	async getAllUsers() {
 		//const users = await this.userRepository.find();
@@ -29,19 +29,19 @@ export class AuthService {
 		};
 	}
 
-	async setRolesForUser(username: string, rolesEntities: RoleEntity[]): Promise<UserEntity>  {
+	async setRolesForUser(username: string, rolesEntities: RoleEntity[]): Promise<UserEntity> {
 		const user = await this.findByUsername(username);
 		user.roles = rolesEntities;
 		return this.userRepository.save(user);
 	}
-	
+
 	async findById(id: any) {
-		return await this.userRepository.findOne({id});
+		return await this.userRepository.findOne({ id });
 	}
 	async findByUsername(username: string): Promise<UserEntity> {
-		const user = await this.userRepository.findOne({username});
-		if(!user){
-			throw new CustomException({"user": USER_NOT_FOUND_ERROR}, HttpStatus.NOT_FOUND);
+		const user = await this.userRepository.findOne({ username });
+		if (!user) {
+			throw new CustomException({ 'user': USER_NOT_FOUND_ERROR }, HttpStatus.NOT_FOUND);
 		}
 		return user;
 	}
@@ -54,11 +54,11 @@ export class AuthService {
 		}
 		newUser.password = await hash(newUser.password, 10);
 		const oldUserByEmail = await this.getUserByEmail(newUser.email);
-		const oldUserByUsername = await this.userRepository.findOne({username: newUser.username});
-		if(oldUserByEmail){
+		const oldUserByUsername = await this.userRepository.findOne({ username: newUser.username });
+		if (oldUserByEmail) {
 			errorResponse.errors['email'] = EMAIL_IS_BUSY_ERROR;
 		}
-		if (oldUserByUsername){
+		if (oldUserByUsername) {
 			errorResponse.errors['username'] = USERNAME_IS_BUSY_ERROR;
 		}
 		if (oldUserByUsername || oldUserByEmail) {
@@ -67,49 +67,49 @@ export class AuthService {
 
 		return await this.userRepository.save(newUser);
 	}
-	async loginUserByEmail(user: UserEntity): Promise<UserEntity>{
-		
+	async loginUserByEmail(user: UserEntity): Promise<UserEntity> {
+
 		const errorResponse = {
 			errors: {
 				'email or password': WRONG_LOGIN_AND_PASSWORD_ERROR
 			}
 		}
-		const userFromBD = await this.userRepository.findOne({ email: user.email }, { select: ['id', 'username', 'email', 'password']});
+		const userFromBD = await this.userRepository.findOne({ email: user.email }, { select: ['id', 'username', 'email', 'password'] });
 
 		let comparePassword = false;
 		if (userFromBD) {
 			comparePassword = await compare(user.password, userFromBD.password);
-		} 
-		
-		if (!userFromBD || !comparePassword){
+		}
+
+		if (!userFromBD || !comparePassword) {
 			throw new UnauthorizedException(errorResponse);
 		}
-		
+
 		delete userFromBD.password;
 		return comparePassword ? userFromBD : null;
 	}
-	
-	private async getUserByEmail(email: string){
-		return await this.userRepository.findOne({email});
+
+	private async getUserByEmail(email: string) {
+		return await this.userRepository.findOne({ email });
 	}
 
-	async buildUserResponce(user: UserEntity):Promise<IUserResponse>{
+	async buildUserResponce(user: UserEntity): Promise<IUserResponse> {
 		return {
 			user: {
 				...user,
-				token: 'Barear '+await this.generateToken(user)
+				token: 'Barear ' + await this.generateToken(user)
 			}
 		};
-		
+
 	}
 
-	private generateToken(user: UserEntity){
+	private generateToken(user: UserEntity) {
 		return sign({
 			id: user.id,
 			username: user.username,
 			email: user.email
 		}, process.env.JWT_SECRET);
-		
+
 	}
 
 	async blockUser(username: string, reasonDto: UserBlockUnblockDto): Promise<UserEntity> {
@@ -126,8 +126,8 @@ export class AuthService {
 		return await this.userRepository.save(user);
 	}
 
-	async deleteUserByName(username: string){
+	async deleteUserByName(username: string) {
 		const user = await this.findByUsername(username);
-		return await this.userRepository.delete({username});
+		return await this.userRepository.delete(user);
 	}
 }
