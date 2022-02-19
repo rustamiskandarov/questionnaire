@@ -1,12 +1,12 @@
 import { ProfileEntity } from '../profile/profile.entity';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany} from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { RoleEntity } from '../role/role.entity';
 import { QuestionEntity } from '../question/question.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity {
-	@ApiProperty({ example: '2ee9b1f4-0f19-4d10-aa0a-d265e990c6cb', description: 'UUID пользователя'})
+	@ApiProperty({ example: '2ee9b1f4-0f19-4d10-aa0a-d265e990c6cb', description: 'UUID пользователя' })
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
@@ -19,7 +19,7 @@ export class UserEntity {
 	lastName: string;
 
 	@ApiProperty({ example: 'Ivanov1999666', description: 'Логин пользователя' })
-	@Column({ length: 40 , unique: true})
+	@Column({ length: 40, unique: true })
 	username: string;
 
 	@ApiProperty({ example: 'example-email@email.em', description: 'Эл.почта пользователя' })
@@ -30,30 +30,30 @@ export class UserEntity {
 	@Column({ type: 'boolean', default: true })
 	isActive: boolean;
 
-	@ApiProperty({description: 'Причина блокировки пользователя'})
+	@ApiProperty({ description: 'Причина блокировки пользователя' })
 	@Column({ length: 250, nullable: true })
 	blockedReason: string;
 
-	@ManyToMany(()=>RoleEntity, role=>role.users, {eager: true})
+	@ManyToMany(() => RoleEntity, role => role.users, { eager: true })
 	@JoinTable()
 	roles: RoleEntity[];
 
 
-	@OneToMany(()=> QuestionEntity, question => question.author)
+	@OneToMany(() => QuestionEntity, question => question.author)
 	questions: QuestionEntity[];
 
 	@ApiProperty({ example: 'password', description: 'Пароль пользователя' })
-	@Column({ select:false, type: 'varchar', length: 300})
+	@Column({ select: false, type: 'varchar', length: 300 })
 	password: string;
 
 	//@ApiProperty({ example: 'Профиль', description: 'Профиль пользователя' })
-	@OneToOne(()=>ProfileEntity)
+	@OneToOne(() => ProfileEntity)
 	profile: ProfileEntity;
 
 	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-	createdAt: Date
+	createdAt: Date;
 	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-	updateAt: Date
+	updateAt: Date;
 
 
 

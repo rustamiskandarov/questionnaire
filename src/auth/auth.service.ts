@@ -10,6 +10,7 @@ import { IUserResponse } from './types/user.response.interface';
 import { RoleEntity } from '../role/role.entity';
 import { UserBlockUnblockDto } from './dto/user-block-unlock.dto';
 import { CustomException } from '../exceptions/custom.exception';
+import { UserSignUpDto } from './dto/user.signup.dto';
 
 @Injectable()
 export class AuthService {
@@ -67,18 +68,18 @@ export class AuthService {
 
 		return await this.userRepository.save(newUser);
 	}
-	async loginUserByEmail(user: UserEntity): Promise<UserEntity> {
+	async loginUserByEmail(userDto: UserSignUpDto): Promise<UserEntity> {
 
 		const errorResponse = {
 			errors: {
 				'email or password': WRONG_LOGIN_AND_PASSWORD_ERROR
 			}
-		}
-		const userFromBD = await this.userRepository.findOne({ email: user.email }, { select: ['id', 'username', 'email', 'password'] });
+		};
+		const userFromBD = await this.userRepository.findOne({ email: userDto.email }, { select: ['id', 'username', 'email', 'password'] });
 
 		let comparePassword = false;
 		if (userFromBD) {
-			comparePassword = await compare(user.password, userFromBD.password);
+			comparePassword = await compare(userDto.password, userFromBD.password);
 		}
 
 		if (!userFromBD || !comparePassword) {

@@ -1,7 +1,7 @@
 import { UserEntity } from '../auth/user.entity';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({name: 'profiles'})
+@Entity({ name: 'profiles' })
 export class ProfileEntity {
 	@PrimaryGeneratedColumn('uuid')
 	id: number;
@@ -9,12 +9,15 @@ export class ProfileEntity {
 	@Column('simple-array')
 	phone: string;
 
-	@Column({type: 'text'})
+	@Column('text')
+	photo: string;
+
+	@Column({ type: 'text' })
 	biography: string;
 
 	@Column('simple-array')
 	skills: string[];
 
-	@OneToOne(()=>UserEntity)
+	@OneToOne(() => UserEntity)
 	user: UserEntity;
 }

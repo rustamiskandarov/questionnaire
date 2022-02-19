@@ -14,6 +14,7 @@ import { QuestionModule } from './question/question.module';
 import { TagModule } from './tag/tag.module';
 import { AnswerModule } from './answer/answer.module';
 import { CommentModule } from './comment/comment.module';
+import { FileModule } from './file/file.module';
 import ormconfig from './ormconfig';
 @Module({
 	imports: [
@@ -54,7 +55,8 @@ import ormconfig from './ormconfig';
 		QuestionModule,
 		TagModule,
 		AnswerModule,
-		CommentModule
+		CommentModule,
+		FileModule
 	],
 	controllers: [AppController],
 })

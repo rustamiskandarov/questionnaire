@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseGuards, UsePipes } from '@nestjs/common';
 import {
 	ApiOperation,
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
+import { ProfileEntity } from 'src/profile/profile.entity';
 
 import { AuthGuard } from '../guards/auth.guard';
 import { RoleGuard } from '../guards/role.guard';
@@ -16,6 +17,7 @@ import { UserAddRoleDto } from './dto/user.add.role.dto';
 import { UserSignUpDto } from './dto/user.signup.dto';
 import { Roles } from './roles-auth.decorator';
 import { IUsersResponse } from './types/users.response.interface';
+import { User } from './user.decorator';
 import { UserEntity } from './user.entity';
 
 @ApiTags('Пользователи')
@@ -32,7 +34,22 @@ export class AuthController {
 	@Post('auth/signup')
 	async createUser(@Body() dto: UserSignUpDto) {
 		const newUser = new UserEntity();
+		const profile = new ProfileEntity();
 		Object.assign(newUser, dto);
+		newUser.profile = profile;
+		const userFromBD = await this.authService.createUser(newUser);
+		return this.authService.buildUserResponce(userFromBD);
+	}
+
+	@UsePipes(new MyValidationPipe)
+	@ApiOperation({ summary: 'Загрузить фото пользователя' })
+	@ApiResponse({ status: 201, type: UserEntity })
+	@Post('user/uploadPhoto')
+	async uploadImage(@User() user: UserEntity, @Body() dto: UserSignUpDto, @UploadedFile() file) {
+		const newUser = new UserEntity();
+		const profile = new ProfileEntity();
+		Object.assign(newUser, dto);
+		newUser.profile = profile;
 		const userFromBD = await this.authService.createUser(newUser);
 		return this.authService.buildUserResponce(userFromBD);
 	}
@@ -42,9 +59,7 @@ export class AuthController {
 	@ApiResponse({ status: 201, type: UserEntity })
 	@Post('auth/login')
 	async loginUser(@Body() dto: UserSignUpDto) {
-		const newUser = new UserEntity();
-		Object.assign(newUser, dto);
-		const userFromBD = await this.authService.loginUserByEmail(newUser);
+		const userFromBD = await this.authService.loginUserByEmail(dto);
 		return this.authService.buildUserResponce(userFromBD);
 	}
 
